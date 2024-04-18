@@ -75,7 +75,7 @@ typedef struct _linuxaldl_byte_definition{
 
 typedef struct _linuxaldl_definition{
 	const char* name;
-	char mode1_request[__MAX_REQUEST_SIZE];  // the mode 1 request message, including the checksum
+	unsigned char mode1_request[__MAX_REQUEST_SIZE];  // the mode 1 request message, including the checksum
 	unsigned int mode1_request_length;  // the length of the mode 1 message including the checksum
 
 	unsigned int mode1_response_length; // the total length of the response from the ecm
@@ -89,10 +89,10 @@ typedef struct _linuxaldl_definition{
 	byte_def_t* mode1_def; // pointer to start of table of byte_def_t structs.
 							// the last element must be LINUXALDL_MODE1_END_DEF
 
-	char mode8_request[__MAX_REQUEST_SIZE];  // the mode 8 (silence) request message, incl checksum
+	unsigned char mode8_request[__MAX_REQUEST_SIZE];  // the mode 8 (silence) request message, incl checksum
 	unsigned int mode8_request_length;  // the length of the mode 8 message incl checksum
 
-	char mode9_request[__MAX_REQUEST_SIZE];  // the mode 9 (un-silence) request message, incl checksum
+	unsigned char mode9_request[__MAX_REQUEST_SIZE];  // the mode 9 (un-silence) request message, incl checksum
 	unsigned int mode9_request_length;  // the length of the mode 9 message including the checksum
 
 

@@ -59,11 +59,11 @@ void ALDL_Init(){
     SerialDebug.println("ALDL interface init ok!");
 }
 
-void ALDL_CalculateChecksum(unsigned char *aldl_raw, int len){
+unsigned char ALDL_CalculateChecksum(unsigned char *buffer, int len){
     // calculates the single-byte checksum, summing from the start of buffer
     // through len bytes minus 1. the checksum is calculated by adding each byte
     // together and ignoring overflow, then taking the two's complement and adding 1
-	char acc = 0x00;
+	unsigned char acc = 0x00;
 	unsigned int i;
 	for (i=0; i<len-1; i++){
 		acc+=buffer[i];
@@ -88,9 +88,9 @@ int ALDL_Read(unsigned char *aldl_raw, int len){
     // read data
     // set timeout
     SerialALDL.setTimeout(ALDLMask->mode1_response_length * 1);
-    int len = SerialALDL.readBytes(aldl_raw, ALDLMask->mode1_response_length);
+    int readlen = SerialALDL.readBytes(aldl_raw, ALDLMask->mode1_response_length);
     // check data length
-    if (len != ALDLMask->mode1_response_length) {
+    if (readlen != ALDLMask->mode1_response_length) {
         SerialDebug.println("ALDL read data fail!");
         return 1;
     }
@@ -133,16 +133,12 @@ void CAN_Send(int base_pid, char *data, int len){
     }
 }
 
-void init(){
+
+void setup() {
     ALDLMask = &aldl_DF;
     SerialDebug_Init();
     ALDL_Init();
     CAN_Init();
-}
-
-
-void setup() {
-    init();
 }
 
 
