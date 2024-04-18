@@ -96,14 +96,14 @@ typedef struct _linuxaldl_definition{
 	unsigned int mode9_request_length;  // the length of the mode 9 message including the checksum
 
 
-} aldl_definition;
+} aldl_definition_t;
 
 
 
 // looks up def_name in the aldl_definition_table until it finds the first 
 // definition in the table with the name def_name
 // if the definition is not in the table, returns NULL
-aldl_definition* aldl_get_definition(const char* defname);
+aldl_definition_t* aldl_get_definition(const char* defname);
 
 typedef struct _linuxaldl_settings
 {
@@ -117,10 +117,10 @@ typedef struct _linuxaldl_settings
 					// 0 when not scanning
 
 	const char* aldldefname; // name for the ALDL definition to be used
-	aldl_definition* definition; // see linuxaldl_definitions.h
+	aldl_definition_t* definition; // see linuxaldl_definitions.h
 
 
-	aldl_definition** aldl_definition_table; // array of pointers to data definitions.
+	aldl_definition_t** aldl_definition_table; // array of pointers to data definitions.
 											// this table is allocated in linuxaldl_definitions.h
 											// and its value assigned upon the initialization of
 											// the global "aldl_settings" variable

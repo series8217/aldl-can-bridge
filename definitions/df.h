@@ -74,7 +74,7 @@ byte_def_t aldl_DF_mode1[]=
 	};
 
 
-aldl_definition aldl_DF = { .name="91-93 3.4 DOHC LQ1 ($DF)",
+aldl_definition_t aldl_DF = { .name="91-93 3.4 DOHC LQ1 ($DF)",
 							.mode1_request={0xF4, 0x57, 0x01, 0x00, 0xB4},
 							.mode1_request_length=5,
 							.mode1_response_length=67,

@@ -44,6 +44,8 @@ mcp2518fd CAN(SPI_CS_PIN); // Set CS pin
 unsigned char aldl_raw[ALDL_MAX_MESSAGE_SIZE] = {0};
 unsigned char can_message[CAN_MAX_FRAME_SIZE] = {0};
 
+aldl_definition_t* ALDLMask;
+
 
 void SerialDebug_Init(){
     // init serial debug port (USB to computer)
@@ -57,25 +59,48 @@ void ALDL_Init(){
     SerialDebug.println("ALDL interface init ok!");
 }
 
-void ALDL_Read(unsigned char *aldl_raw, int len){
-    if (len < aldl_DF.mode1_response_length) {
+void ALDL_CalculateChecksum(unsigned char *aldl_raw, int len){
+    // calculates the single-byte checksum, summing from the start of buffer
+    // through len bytes minus 1. the checksum is calculated by adding each byte
+    // together and ignoring overflow, then taking the two's complement and adding 1
+	char acc = 0x00;
+	unsigned int i;
+	for (i=0; i<len-1; i++){
+		acc+=buffer[i];
+	}
+	acc=0xFF-acc;
+	acc+=0x01;
+	return acc;
+}
+
+int ALDL_Read(unsigned char *aldl_raw, int len){
+    if (len < ALDLMask->mode1_response_length) {
         SerialDebug.println("ALDL buffer too small!");
-        return;
+        return 0;
     }
     // get aldl mode 1 message
     // send MODE8 to silence the ECM
-    SerialALDL.write(aldl_DF.mode8_request, aldl_DF.mode8_request_length);
+    SerialALDL.write(ALDLMask->mode8_request, ALDLMask->mode8_request_length);
     delay(10);
     // request MODE1 to get data
-    SerialALDL.write(aldl_DF.mode1_request, aldl_DF.mode1_request_length);
+    SerialALDL.write(ALDLMask->mode1_request, ALDLMask->mode1_request_length);
     delay(10);
     // read data
-    int len = SerialALDL.readBytes(aldl_raw, aldl_DF.mode1_response_length);
+    // set timeout
+    SerialALDL.setTimeout(ALDLMask->mode1_response_length * 1);
+    int len = SerialALDL.readBytes(aldl_raw, ALDLMask->mode1_response_length);
     // check data length
-    if (len != aldl_DF.mode1_response_length) {
+    if (len != ALDLMask->mode1_response_length) {
         SerialDebug.println("ALDL read data fail!");
-        return;
+        return 1;
     }
+    // calculate checksum
+    int checksum = ALDL_CalculateChecksum(aldl_raw, ALDLMask->mode1_response_length);
+    if (checksum != aldl_raw[ALDLMask->mode1_response_length - 1]) {
+        SerialDebug.println("ALDL checksum error!");
+        return 1;
+    }
+
 }
 
 void CAN_Init(){
@@ -109,6 +134,7 @@ void CAN_Send(int base_pid, char *data, int len){
 }
 
 void init(){
+    ALDLMask = &aldl_DF;
     SerialDebug_Init();
     ALDL_Init();
     CAN_Init();
@@ -122,12 +148,17 @@ void setup() {
 
 void loop() 
 {
-    if (ALDL_MAX_MESSAGE_SIZE < aldl_DF.mode1_response_length) {
+    if (ALDL_MAX_MESSAGE_SIZE < ALDLMask->mode1_response_length) {
         SerialDebug.println("ERROR: ALDL buffer too small!");
         delay(1000);
         return;
     }
-    ALDL_Read(aldl_raw, ALDL_MAX_MESSAGE_SIZE);
-    CAN_Send(CAN_BASE_PID, aldl_raw + aldl_DF.mode1_data_offset, aldl_DF.mode1_data_length);
+    int retval = ALDL_Read(aldl_raw, ALDL_MAX_MESSAGE_SIZE);
+    if (retval != 0) {
+        SerialDebug.println("ERROR: ALDL read fail!");
+        delay(1000);
+        return;
+    }
+    CAN_Send(CAN_BASE_PID, aldl_raw + ALDLMask->mode1_data_offset, ALDLMask->mode1_data_length);
     delay(100);
 }
