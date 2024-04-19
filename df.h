@@ -21,17 +21,12 @@ LICENSING INFORMATION:
 */
 
 #include <string.h>
-#include "../linuxaldl.h"
+#include "definition.h"
 
 // ==========================================
-//
 //   DF CODE MASK DEFINITION
 // Engine: 1991-1993 3.4 DOHC V6 (LQ1) Vin "X"
-//
-// aldl_definition_table entry: aldl_DF
-// mode1 definition table: aldl_DF_mode1
 // ===========================================
-extern const byte_def_t aldl_DF_mode1[];
 extern const aldl_definition_t aldl_DF;
 
 #endif
