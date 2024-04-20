@@ -107,7 +107,6 @@ int ALDL_SilenceBus(){
     SerialALDL.write(ALDLMask->mode8_request, ALDLMask->mode8_request_length);
     SerialALDL.flush();
     delay(50);
-    SerialDebug.println("took bus");
 }
 
 
