@@ -58,6 +58,7 @@ const byte_map_t aldl_DF_mode1_byte_map[] =
 		{0, 0, 0, 0, 0}};
 
 const aldl_definition_t aldl_DF = {.name = "91-93 3.4 DOHC LQ1 ($DF)",
+                   // message ID byte 0xF4, length 2 (+55), mode 1, checksum
 								   .mode1_request = {0xF4, 0x57, 0x01, 0x00, 0xB4},
 								   .mode1_request_length = 5,
 								   .mode1_response_length = 67,
