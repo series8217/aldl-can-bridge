@@ -93,7 +93,7 @@ bool ALDL_VerifyChecksum(byte *buffer, int len)
     // calculates the single-byte checksum, summing from the start of buffer
     // through len bytes which includes the checksum. the result should be zero.
     byte acc = 0;
-    for (unsigned int i = 0; i < len - 1; i++)
+    for (unsigned int i = 0; i < len; i++)
     {
         acc += buffer[i];
     }
@@ -120,8 +120,8 @@ int ALDL_Read(byte *aldl_raw, int len)
     }
     // IMPROVE: can we do this in place on aldl_raw?
     byte receive_buf[ALDL_MAX_MESSAGE_SIZE];
-    memset(receive_buf, 0, sizeof(receive_buf));
-    memset(aldl_raw, 0xFF, sizeof(aldl_raw));
+    memset(receive_buf, 0xFF, sizeof(receive_buf));
+    memset(aldl_raw, 0x00, sizeof(aldl_raw));
 
     // get aldl mode 1 message
     // request MODE1 to get data
@@ -138,9 +138,8 @@ int ALDL_Read(byte *aldl_raw, int len)
     const int START_SEQ_LENGTH = 3;
     byte mode1_resp_header[3];
     mode1_resp_header[0] = 0xF4;
-    // XXX: why +1???
+    // XXX: why +1??? why 0x55?
     mode1_resp_header[1] = ALDLMask->mode1_data_length + 1 + 0x55;
-    byte length_from_header = mode1_resp_header[1] - 0x55;
     mode1_resp_header[2] = 0x01;
 
     // set timeout to just the time necessary to fill the buf if the bus is busy enough
@@ -157,13 +156,13 @@ int ALDL_Read(byte *aldl_raw, int len)
       }
     }
     // FIXME: this is not the correct length to copy. it should stop at end of message!!!
-    int message_len = ALDL_MAX_MESSAGE_SIZE;
-    // byte index 1 in the header is the size plus 0x55. 
-    int len_from_header = receive_buf+i+1-0x55;
+    unsigned int message_len = ALDL_MAX_MESSAGE_SIZE;
+    // byte index 1 in the header is the size plus 0x52. 
+    unsigned int len_from_header = receive_buf[i+1]-0x52;
     if (len_from_header < ALDL_MAX_MESSAGE_SIZE){
       message_len = len_from_header;
     }
-    memcpy(aldl_raw, receive_buf+i, ALDL_MAX_MESSAGE_SIZE-i);
+    memcpy(aldl_raw, receive_buf+i, message_len);
     if (!match){
       SerialDebug.println("! no header match");
     }
