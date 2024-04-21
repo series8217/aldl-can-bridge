@@ -13,52 +13,53 @@
 // XXX: check for correctness against DF mask
 const byte_map_t aldl_DF_mode1_byte_map[] =
 	{
-		// label, aldl_byte_offset, num_bytes, can_pid_offset, can_byte_offset
+		// label, aldl_byte_offset, num_bytes, can_pid_offset, can_bytes_offset
 		// frames must be in order, because the data is packed and sent
 		// in order.
 		// frame 0
-		{"EngineRPM", 11, 1, 0, 0},
-		{"EngineTPS", 10, 1, 0, 8},
-		{"VehicleSpeed", 17, 1, 0, 16},
-		{"EngineAirflow", 37, 1, 0, 24},
-		{"CoolantTemp", 7, 1, 0, 32},
-		{"IntakeAirTemp", 30, 1, 0, 40},
-		{"MAP", 29, 1, 0, 48},
+		{"EngineRPM", 10, 1, 0, 0},
+		{"EngineTPS", 9, 1, 0, 1},
+		{"VehicleSpeed", 16, 1, 0, 2},
+		{"EngineAirflow", 36, 1, 0, 3},
+		{"CoolantTemp", 6, 1, 0, 4},
+		{"IntakeAirTemp", 29, 1, 0, 5},
+		{"MAP", 28, 1, 0, 6},
 		// frame 1
-		{"DesiredAFR", 41, 1, 1, 8},
-		{"NarrowbandO2", 19, 1, 1, 8},
-		{"FinalBasePulseWidth", 42, 2, 1, 16},
-		{"CurrentBLMCell", 23, 1, 1, 32},
-		{"BLM", 22, 1, 1, 40},
-		{"Integrator", 24, 1, 1, 48},
-		{"BasePulseFineCorr", 21, 1, 2, 0},
+		{"DesiredAFR", 40, 1, 1, 0},
+		{"NarrowbandO2", 18, 1, 1, 1},
+		{"FinalBasePulseWidth", 41, 2, 1, 2},
+		{"CurrentBLMCell", 22, 1, 1, 3},
+		{"BLM", 21, 1, 1, 4},
+		{"Integrator", 23, 1, 1, 5},
+		{"BasePulseFineCorr", 20, 1, 1, 6},
 		// frame 2
-		{"BLMCell0Timer", 36, 1, 2, 8},
-		{"KnockEvents", 51, 1, 2, 16},
-		{"SparkAdvance", 40, 1, 2, 24},
-		{"KnockRetard", 46, 1, 2, 32},
-		{"PROMID", 1, 2, 2, 40},
+		{"BLMCell0Timer", 35, 1, 2, 0},
+		{"KnockEvents", 50, 1, 2, 1},
+		{"SparkAdvance", 39, 1, 2, 2},
+		{"KnockRetard", 45, 1, 2, 3},
 		// frame 3
-		{"TPSVoltage", 9, 1, 3, 0},
-		{"IACSteps", 25, 1, 3, 8},
-		{"IACMinPosition", 22, 1, 3, 16},
-		{"BarometricPressure", 28, 1, 3, 24},
-		{"EngineRunTime", 48, 2, 3, 32},
-		{"CatalyticConvTemp", 50, 1, 3, 48},
+		{"TPSVoltage", 8, 1, 3, 0},
+		{"IACSteps", 24, 1, 3, 1},
+		{"IACMinPosition", 21, 1, 3, 2},
+		{"BarometricPressure", 27, 1, 3, 3},
+		{"EngineRunTime", 47, 2, 3, 4},
+		{"CatalyticConvTemp", 49, 1, 3, 6},
 		// frame 4
-		{"FuelPumpRelayVolts", 31, 1, 4, 0},
-		{"O2CrossCount", 20, 1, 4, 8},
-		{"DesiredIdleSpeed", 27, 1, 4, 16},
-		{"BatteryVoltage", 34, 1, 4, 24},
-		{"CCPDutyCycle", 45, 1, 4, 32},
-		{"RPMMPH", 47, 1, 4, 40},
-		{"ACPressureSensor", 33, 1, 4, 48},
+		{"FuelPumpRelayVolts", 30, 1, 4, 0},
+		{"O2CrossCount", 19, 1, 4, 1},
+		{"DesiredIdleSpeed", 26, 1, 4, 2},
+		{"BatteryVoltage", 33, 1, 4, 3},
+		{"CCPDutyCycle", 44, 1, 4, 4},
+		{"RPMMPH", 46, 1, 4, 5},
+		{"ACPressureSensor", 32, 1, 4, 6},
+		{"CorrosivitySensor", 43, 1, 4, 7},
 		// frame 5
-		{"CorrosivitySensor", 44, 1, 5, 0},
+		{"PROMID", 0, 2, 5, 0},
+		// end of map
 		{0, 0, 0, 0, 0}};
 
 const aldl_definition_t aldl_DF = {.name = "91-93 3.4 DOHC LQ1 ($DF)",
-                   // message ID byte 0xF4, length 2 (+55), mode 1, checksum
+								   // message ID byte 0xF4, length 2 (+55), mode 1, checksum
 								   .mode1_request = {0xF4, 0x57, 0x01, 0x00, 0xB4},
 								   .mode1_request_length = 5,
 								   .mode1_response_length = 67,

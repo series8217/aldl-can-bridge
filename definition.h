@@ -34,7 +34,7 @@ typedef struct
 	unsigned int aldl_byte_offset;
 	unsigned int num_bytes;
 	unsigned int can_pid_offset;
-	unsigned int can_bits_offset;
+	unsigned int can_byte_offset;
 } byte_map_t;
 
 typedef struct _aldl_definition

@@ -16,34 +16,54 @@
     CAN_500K_3M
     CAN_500K_4M
     CAN_1000K_4M
+
+      CAN Bus baudrare for CAN2.0 as below,
+
+    CAN20_5KBPS
+    CAN20_10KBPS
+    CAN20_20KBPS
+    CAN20_25KBPS
+    CAN20_31K25BPS
+    CAN20_33KBPS
+    CAN20_40KBPS
+    CAN20_50KBPS
+    CAN20_80KBPS
+    CAN20_83K3BPS
+    CAN20_95KBPS
+    CAN20_100KBPS
+    CAN20_125KBPS
+    CAN20_200KBPS
+    CAN20_250KBPS
+    CAN20_500KBPS
+    CAN20_666KBPS
+    CAN20_800KBPS
+    CAN20_1000KBPS
 */
 
-//#define BOARD_OBD2_GPS
+// #define BOARD_OBD2_GPS
 #define BOARD_CANBED_FD_AVR
+#define CAN_BAUD_RATE CAN20_500KBPS
 
+// Debug Logging
+// #define DEBUG_LOG_ALDL
 
 #include <SPI.h>
 
 #ifdef BOARD_CANBED_FD_AVR
-  #include "mcp2518fd_can.h"
-  // pin for CANBed FD
-  const int SPI_CS_PIN = 17;
-  const int CAN_INT_PIN = 7;
-
-  mcp2518fd CAN(SPI_CS_PIN); // Set CS pin
+#include "mcp2518fd_can.h"
+// pin for CANBed FD
+const int SPI_CS_PIN = 17;
+const int CAN_INT_PIN = 7;
+mcp2518fd CAN(SPI_CS_PIN); // Set CS pin
 #endif
 
 #ifdef BOARD_OBD2_GPS
-  #include "mcp_canbus.h"
-
-  MCP_CAN CAN(SPI_CS_PIN_MCP_CAN)
-
-  // SPI CS pin for the CAN bus chip
-  #define SPI_CS_PIN_MCP_CAN 9
-
-  // this tells the CAN library which pin to use
-  extern MCP_CAN CAN;
-
+#include "mcp_canbus.h"
+MCP_CAN CAN(SPI_CS_PIN_MCP_CAN)
+// SPI CS pin for the CAN bus chip
+#define SPI_CS_PIN_MCP_CAN 9
+    // this tells the CAN library which pin to use
+    extern MCP_CAN CAN;
 #endif
 
 #include "df.h"
@@ -54,18 +74,16 @@
 #define ALDL_MAX_MESSAGE_SIZE 128
 #define CAN_MAX_FRAME_SIZE 8
 
-#define CAN_BASE_PID 0xBAD
+#define CAN_BASE_PID 0x370
 
 // pin for CAN-FD Shield
 // const int SPI_CS_PIN = 9;
 // const int CAN_INT_PIN = 2;
 
-
 byte aldl_raw[ALDL_MAX_MESSAGE_SIZE] = {0};
 byte can_message[CAN_MAX_FRAME_SIZE] = {0};
 
 const aldl_definition_t *ALDLMask;
-
 
 void SerialDebug_Init()
 {
@@ -76,7 +94,6 @@ void SerialDebug_Init()
     }
 }
 
-
 void ALDL_Init()
 {
     /* Start the ALDL interface at its weird 8192 baud rate */
@@ -86,7 +103,6 @@ void ALDL_Init()
     }
     SerialDebug.println("ALDL UART init ok");
 }
-
 
 bool ALDL_VerifyChecksum(byte *buffer, int len)
 {
@@ -100,15 +116,14 @@ bool ALDL_VerifyChecksum(byte *buffer, int len)
     return acc == 0;
 }
 
-
-int ALDL_SilenceBus(){
+int ALDL_SilenceBus()
+{
     // become the bus master
     // send MODE8 to silence the ECM
     SerialALDL.write(ALDLMask->mode8_request, ALDLMask->mode8_request_length);
     SerialALDL.flush();
     delay(50);
 }
-
 
 int ALDL_Read(byte *aldl_raw, int len)
 {
@@ -148,37 +163,46 @@ int ALDL_Read(byte *aldl_raw, int len)
     // scan the received data for the start sequence
     bool match = 0;
     int i = 0;
-    for (i=0; i<readlen-START_SEQ_LENGTH; i++){
-      if (memcmp(receive_buf+i, mode1_resp_header, START_SEQ_LENGTH) == 0){
-        match = 1;
-        break;
-      }
+    for (i = 0; i < readlen - START_SEQ_LENGTH; i++)
+    {
+        if (memcmp(receive_buf + i, mode1_resp_header, START_SEQ_LENGTH) == 0)
+        {
+            match = 1;
+            break;
+        }
     }
     // FIXME: this is not the correct length to copy. it should stop at end of message!!!
     unsigned int message_len = ALDL_MAX_MESSAGE_SIZE;
-    // byte index 1 in the header is the size plus 0x52. 
-    unsigned int len_from_header = receive_buf[i+1]-0x52;
-    if (len_from_header < ALDL_MAX_MESSAGE_SIZE){
-      message_len = len_from_header;
+    // byte index 1 in the header is the size plus 0x52.
+    unsigned int len_from_header = receive_buf[i + 1] - 0x52;
+    if (len_from_header < ALDL_MAX_MESSAGE_SIZE)
+    {
+        message_len = len_from_header;
     }
-    memcpy(aldl_raw, receive_buf+i, message_len);
-    if (!match){
-      SerialDebug.println("! no header match");
+    memcpy(aldl_raw, receive_buf + i, message_len);
+    if (!match)
+    {
+        SerialDebug.println("! no header match");
     }
+#ifdef DEBUG_LOG_ALDL
     // print the data as hex
-    for (int i=0; i<message_len; i++){
-      SerialDebug.print("0x");
-      if (aldl_raw[i] < 16){
-        SerialDebug.print("0");
-      }
-      SerialDebug.print(aldl_raw[i], HEX);
-      SerialDebug.print(",");
-      if (i%8==7){
-        SerialDebug.println();
-      }
+    for (int i = 0; i < message_len; i++)
+    {
+        SerialDebug.print("0x");
+        if (aldl_raw[i] < 16)
+        {
+            SerialDebug.print("0");
+        }
+        SerialDebug.print(aldl_raw[i], HEX);
+        SerialDebug.print(",");
+        if (i % 8 == 7)
+        {
+            SerialDebug.println();
+        }
     }
     SerialDebug.println();
-    if (message_len < ALDLMask->mode1_response_length-3)
+#endif
+    if (message_len < ALDLMask->mode1_response_length - 3)
     {
         SerialDebug.println("! ALDL message len wrong");
     }
@@ -188,15 +212,16 @@ int ALDL_Read(byte *aldl_raw, int len)
         SerialDebug.println("! ALDL checksum error");
         return 1;
     }
+#ifdef DEBUG_LOG_ALDL
     SerialDebug.println("message OK");
+#endif
     return 0;
 }
-
 
 void CAN_Init()
 {
     // init can bus : arbitration bitrate = 500k, data bitrate = 1M
-    while (0 != CAN.begin(CAN_500K_4M))
+    while (0 != CAN.begin(CAN_BAUD_RATE))
     {
         SerialDebug.println("! CAN init fail, retry");
         delay(100);
@@ -209,7 +234,6 @@ void CAN_Init()
     SerialDebug.print("CAN mode = ");
     SerialDebug.println(mode);
 }
-
 
 void CAN_SendBatch(int base_pid, byte *data, int len)
 {
@@ -228,46 +252,56 @@ void CAN_SendBatch(int base_pid, byte *data, int len)
     }
 }
 
-
-void CAN_SendMapped(int base_pid, byte *data, int len, const byte_map_t *map)
+void CAN_SendMapped(int base_pid, byte *data, int data_len, const byte_map_t *map)
 {
     byte can_data[8] = {0};
-    int can_pid = base_pid;
-    int last_can_pid_offset = 0;
-    int this_can_frame_length = 0;
-    for (int i = 0; i < len; i++)
+    int can_pid_offset = 0;
+    int frame_length = 0;
+    unsigned int map_index = 0;
+    // send all values from the map. the last map entry has a label of numeric 0.
+    while (map[map_index].label != 0)
     {
-        const byte_map_t *entry = &map[i];
-        if (entry->label == 0)
+        const byte_map_t *entry = &map[map_index];
+        map_index += 1;
+        // when the PID offset changes, we go to the next frame
+        if (entry->can_pid_offset != can_pid_offset)
         {
-            // end of map, send last batch
-            if (this_can_frame_length > 0)
+            // end of this frame, send frame if any data
+            if (frame_length > 0)
             {
-                CAN_SendBatch(can_pid, can_data, this_can_frame_length);
+                CAN_SendBatch(base_pid + can_pid_offset, can_data, 8);
             }
-            return;
-        }
-        if (entry->can_pid_offset != last_can_pid_offset)
-        {
-            // end of this frame, send frame
-            CAN_SendBatch(can_pid, can_data, 8);
-            last_can_pid_offset = entry->can_pid_offset;
-            this_can_frame_length = 0;
+            // start working on the new frame
+            can_pid_offset = entry->can_pid_offset;
+            frame_length = 0;
             memset(can_data, 0, 8);
         }
-        // pack the next ALDL data element nto the CAN frame
-        int can_pid = base_pid + entry->can_pid_offset;
-        int can_byte_offset = entry->can_bits_offset / 8;
-        int can_bit_offset = entry->can_bits_offset % 8;
-        int can_byte_mask = 0xFF >> (8 - entry->num_bytes);
+        // pack the next ALDL data element into the CAN frame
+        int can_byte_offset = entry->can_byte_offset;
 
         for (int j = 0; j < entry->num_bytes; j++)
         {
-            can_data[can_byte_offset + j] |= (data[entry->aldl_byte_offset + j] & can_byte_mask) << can_bit_offset;
+            unsigned int aldl_data_index = entry->aldl_byte_offset + j;
+            if (aldl_data_index >= data_len)
+            {
+                SerialDebug.println("! map index exceeds data");
+                continue;
+            }
+            byte aldl_byte = (data[entry->aldl_byte_offset + j]);
+            can_data[can_byte_offset + j] = aldl_byte;
+            if (can_byte_offset + j + 1 > frame_length)
+            {
+                frame_length = can_byte_offset + j + 1;
+            }
         }
     }
+    // end of map, send last batch
+    if (frame_length > 0)
+    {
+        CAN_SendBatch(base_pid + can_pid_offset, can_data, frame_length);
+    }
+    return;
 }
-
 
 void setup()
 {
@@ -276,7 +310,6 @@ void setup()
     ALDL_Init();
     CAN_Init();
 }
-
 
 void loop()
 {
@@ -287,9 +320,10 @@ void loop()
         delay(1000);
         return;
     }
-    if (iteration % 5 == 0){
-      // periodically take control of the bus to disable ECU chatter
-      ALDL_SilenceBus();
+    if (iteration % 5 == 0)
+    {
+        // periodically take control of the bus to disable ECU chatter
+        ALDL_SilenceBus();
     }
     int retval = ALDL_Read(aldl_raw, ALDL_MAX_MESSAGE_SIZE);
     if (retval != 0)
@@ -300,8 +334,9 @@ void loop()
     }
     CAN_SendMapped(CAN_BASE_PID,
                    aldl_raw + ALDLMask->mode1_data_offset,
-                   ALDLMask->mode1_data_length,
+                   ALDL_MAX_MESSAGE_SIZE - ALDLMask->mode1_data_offset,
                    ALDLMask->mode1_map);
     delay(100);
     iteration += 1;
+    SerialDebug.print(".");
 }
