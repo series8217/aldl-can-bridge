@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RealDashCAN version="2">
+<!-- This system includes the following modules                    -->
+<!--    GM 1991-1993 3.4 DOHC V6 LQ1 Stock ECU w ALDL<->CAN bridge -->
+  <frames>
+    <!--  GM 1991-1993 3.4 DOHC V6 LQ1 Stock ECU w ALDL<->CAN bridge -->
+    <frame id="0x380" endianess="big">
+      <!-- Frame 0 -->
+      <value name="Engine RPM (ECU)" offset="0" length="1" conversion="25*V"></value>
+      <value targetId="42" name="Throttle Position" offset="1" length="1" conversion="0.003906*V" rangeMin="0" rangeMax="100"></value>
+      <value name="Vehicle Speed (ECU)" offset="2" length="1" units="mph" rangeMin="0" rangeMax="200"></value>
+      <value targetId="30" name="MAF g/s" offset="3" length="1" conversion="1.0*V"></value>
+      <value targetId="14" name="Coolant Temperature" offset="4" length="2" units="F" conversion="1.35*V-40.0"></value>
+      <value targetId="27" name="Intake Air Temperature" offset="5" length="1" units="C" conversion="V"></value>
+      <value targetId="31" name="Manifold Absolute Pressure" offset="6" length="1" units="bar" conversion="0.00369*V+0.10354"></value>
+    </frame>
+    <frame id="0x381" endianness="big">
+      <!-- Frame 1 -->
+      <!-- FIXME: should this be units of lambda or AFR? -->
+      <value targetId="2" name="AFR Target" offset="0" length="1" conversion="0.1*V"></value>
+      <!-- FIXME: this conversion is definitely wrong -->
+      <value targetId="254" name="Lambda (narrowband)" offset="1" length="1" conversion="4420*V" units="V"></value>
+      <!-- FIXME: this is base where do we get final? or is this all we get? -->
+      <value targetId="35" name="Base Pulse Width" offset="2" length="2" conversion="0.015259" units="ms"></value>
+    </frame>
+    <frame id="0x382" endianness="big">
+      <!-- Frame 2 -->
+      <value name="Current BLM Cell" offset="0" length="1"></value>
+      <value name="BLM" offset="1" length="1"></value>
+      <value name="Integrator" offset="2" length="1"></value>
+      <value name="Base Pulse Fine Correction (counts)" offset="3" length="1"></value>
+      <value name="BLM Cell 0 Timer" offset="4" length="1"></value>
+    </frame>
+    <frame id="0x383" endianness="big">
+      <!-- Frame 3 -->
+      <value name="Knock Events" offset="0" length="1"></value>
+      <value name="Spark Advance" offset="1" length="1" conversion="0.35156*V" units="deg"></value>
+      <value name="Knock Retard" offset="2" length="2" conversion="0.175781*V" units="deg"></value>
+    </frame>
+    <frame id="0x384" endianness="big">
+      <!-- Frame 4 -->
+      <value name="TPS Voltage" offset="0" length="1" conversion="0.019531*V" units="V"></value>
+      <value name="IAC Steps" offset="1" length="1" units="steps"></value>
+      <value name="IAC Min Position" offset="2" length="1" units="steps"></value>
+      <value targetId="11" name="Barometric Pressure" offset="3" conversion="0.00369*V+0.103542" units="bar"></value>
+      <value targetId="33" name="Engine Runtime (sec)" offset="4" length="2"></value>
+      <value name="Catalytic Converter Temperature" offset="6" length="1" conversion="3.0*V+300" units="C"></value>
+    </frame>
+    <frame id="0x385" endianess="big">
+      <!-- Frame 5 -->
+      <value name="Fuel Pump Volts" offset="0" length="1" conversion="0.1*V" units="V"></value>
+      <value name="O2 Cross Counts" offset="1" length="1" units="counts"></value>
+      <value name="Desired Idle Speed" offset="2" length="1" conversion="12.5*V" units="rpm"></value>
+      <value name="Battery Voltage (ECU)" offset="3" length="1" conversion="0.1*V" units="V"></value>
+      <value name="AC Pressure Sensor" offset="6" length="1" conversion="1.0" units="counts"></value>
+    </frame>
+  
+  
+  </frames>
+</RealDashCAN>
