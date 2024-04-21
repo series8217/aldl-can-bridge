@@ -11,22 +11,24 @@ BO_ 896 ECM_0: 7 ALDL_DF_MODE1
     SG_ IntakeAirTemp     : 40|8@0+        (1.0,0.0)       [0|0]   "counts"
     SG_ MAP               : 48|8@0+        (0.369,10.354)  [0|0]   "kPa"
 
-B0_ 897 ECM_1: 7 ALDL_DF_MODE1
+B0_ 897 ECM_1: 4 ALDL_DF_MODE1
     SG_ DesiredAFR        : 0|8@0+        (0.1,0.0)       [0|0]   "A/F"
     SG_ NarrowbandO2      : 8|8@0+        (4420,0.0)      [0|0]   "V"
     SG_ InjectorBasePulse : 16|16@0+       (0.015259,0.0)  [0|0]   "ms"
-    SG_ CurrentBLMCell    : 32|8@0+        (1.0,0.0)       [0|0]   ""
-    SG_ BLM               : 40|8@0+        (1.0,0.0)       [0|0]   "counts"
-    SG_ Integrator        : 48|8@0+        (1.0,0.0)       [0|0]   "counts"
-    SG_ BasePulseFineCorr : 56|8@0+        (1.0,0.0)       [0|0]   "counts"
 
-B0_ 898 ECM_2: 4 ALDL_DF_MODE1
-    SG_ BLMCell0Timer     : 8|8@0+        (1.0,0.0)       [0|0]   "counts"
-    SG_ KnockEvents       : 16|8@0+        (1.0,0.0)       [0|0]   "counts"
-    SG_ SparkAdvance      : 24|8@0+        (0.35156,0.0)   [0|0]   "deg"
-    SG_ KnockRetard       : 32|8@0+        (0.175781,0.0)  [0|0]   "deg"
+B0_ 898 ECM_2: 5 ALDL_DF_MODE1
+    SG_ CurrentBLMCell    : 0|8@0+        (1.0,0.0)       [0|0]   ""
+    SG_ BLM               : 8|8@0+        (1.0,0.0)       [0|0]   "counts"
+    SG_ Integrator        : 16|8@0+        (1.0,0.0)       [0|0]   "counts"
+    SG_ BasePulseFineCorr : 24|8@0+        (1.0,0.0)       [0|0]   "counts"
+    SG_ BLMCell0Timer     : 32|8@0+        (1.0,0.0)       [0|0]   "counts"
 
-B0_ 899 ECM_3: 6 ALDL_DF_MODE1
+B0_ 898 ECM_3: 4 ALDL_DF_MODE1
+    SG_ KnockEvents       : 0|8@0+        (1.0,0.0)       [0|0]   "counts"
+    SG_ SparkAdvance      : 8|8@0+        (0.35156,0.0)   [0|0]   "deg"
+    SG_ KnockRetard       : 16|8@0+        (0.175781,0.0)  [0|0]   "deg"
+
+B0_ 899 ECM_4: 7 ALDL_DF_MODE1
     SG_ TPSVoltage        : 0|8@0+        (0.019531,0.0)  [0|0]   "V"
     SG_ IACSteps          : 8|8@0+        (1.0,0.0)       [0|0]   "steps"
     SG_ IACMinPosition    : 16|8@0+        (1.0,0.0)       [0|0]   "steps"
@@ -34,7 +36,7 @@ B0_ 899 ECM_3: 6 ALDL_DF_MODE1
     SG_ EngineRunTime     : 32|16@0+       (1.0,0.0)       [0|0]   "sec"
     SG_ CatalyticConvTemp : 48|8@0+        (3.0,300.0)     [0|0]   "Deg C"
 
-B0_ 900 ECM_4: 8 ALDL_DF_MODE1
+B0_ 900 ECM_5: 8 ALDL_DF_MODE1
     SG_ FuelPumpVolts     : 0|8@0+        (0.1,0.0)       [0|0]   "V"
     SG_ O2CrossCount      : 8|8@0+        (1.0,0.0)       [0|0]   "counts"
     SG_ DesiredIdleSpeed  : 16|8@0+        (12.5,0.0)      [0|0]   "rpm"
@@ -44,5 +46,5 @@ B0_ 900 ECM_4: 8 ALDL_DF_MODE1
     SG_ ACPressureSensor  : 48|8@0+        (1.0,0.0)       [0|0]   "A/D Counts"
     SG_ CorrosivitySensor : 56|8@0+        (0.0196,0.0)    [0|0]   "V"
 
-B0_ 901 ECM_5: 8 ALDL_DF_MODE1
+B0_ 901 ECM_6: 8 ALDL_DF_MODE1
     SG_ PROMID            : 0|16@0+         (1.0,0.0)       [0|0]   "ID"
