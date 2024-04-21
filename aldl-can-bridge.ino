@@ -74,7 +74,7 @@ MCP_CAN CAN(SPI_CS_PIN_MCP_CAN)
 #define ALDL_MAX_MESSAGE_SIZE 128
 #define CAN_MAX_FRAME_SIZE 8
 
-#define CAN_BASE_PID 0x370
+#define CAN_BASE_PID 0x380
 
 // pin for CAN-FD Shield
 // const int SPI_CS_PIN = 9;
