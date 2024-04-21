@@ -54,7 +54,5 @@
       <value name="Battery Voltage (ECU)" offset="3" length="1" conversion="0.1*V" units="V"></value>
       <value name="AC Pressure Sensor" offset="6" length="1" conversion="1.0" units="counts"></value>
     </frame>
-  
-  
   </frames>
 </RealDashCAN>
