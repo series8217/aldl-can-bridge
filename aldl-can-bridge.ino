@@ -337,5 +337,4 @@ void loop()
                    ALDLMask->mode1_map);
     delay(100);
     iteration += 1;
-    SerialDebug.print(".");
 }
