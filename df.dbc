@@ -7,8 +7,8 @@ BO_ 896 ECM_0: 7 ALDL_DF_MODE1
     SG_ ThrottlePosition  : 8|8@0+        (0.003906,0.0)  [0|100]   "%"
     SG_ VehicleSpeed      : 16|8@0+        (1.0,0.0)       [0|200]   "mph"
     SG_ EngineAirflow     : 24|8@0+        (1.0,0.0)       [0|0]   "gm/sec"
-    SG_ CoolantTemp       : 32|8@0+         (1.35,-40.0)    [0|0]   "F"
-    SG_ IntakeAirTemp     : 40|8@0+        (1.0,0.0)       [0|0]   "counts"
+    SG_ CoolantTemp       : 32|8@0+        (1.35,-40.0)    [0|0]   "F"
+    SG_ IntakeAirTemp     : 40|8@0+        (1.35,-40.0)       [0|0]   "F"
     SG_ MAP               : 48|8@0+        (0.369,10.354)  [0|0]   "kPa"
 
 B0_ 897 ECM_1: 4 ALDL_DF_MODE1
@@ -46,5 +46,12 @@ B0_ 900 ECM_5: 8 ALDL_DF_MODE1
     SG_ ACPressureSensor  : 48|8@0+        (1.0,0.0)       [0|0]   "A/D Counts"
     SG_ CorrosivitySensor : 56|8@0+        (0.0196,0.0)    [0|0]   "V"
 
-B0_ 901 ECM_6: 8 ALDL_DF_MODE1
-    SG_ PROMID            : 0|16@0+         (1.0,0.0)       [0|0]   "ID"
+B0_ 901 ECM_6: 2 ALDL_DF_MODE1
+    SG_ PROMID            : 0|16@0+         (1.0,0.0)      [0|0]   "ID"
+
+B0_ 902 ECM_7: 4 ALDL_DF_MODE1
+    SG_ MALFF1            : 0|8@0+          (1.0,0.0)      [0|0]   "MALF FLAGS 1"
+    SG_ MALFF2            : 8|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 2"
+    SG_ MALFF3            : 16|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 3"
+    SG_ MALFF4            : 24|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 4"
+    SG_ MAP_LOW           : 12|1@0+

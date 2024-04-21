@@ -71,7 +71,7 @@ MCP_CAN CAN(SPI_CS_PIN_MCP_CAN)
 #define SerialALDL Serial1
 #define SerialDebug Serial
 
-#define ALDL_MAX_MESSAGE_SIZE 128
+#define ALDL_MAX_MESSAGE_SIZE 156
 #define CAN_MAX_FRAME_SIZE 8
 
 #define CAN_BASE_PID 0x380
@@ -89,6 +89,25 @@ void SerialDebug_Init()
 {
     /* Start the serial debug interface (USB to computer )*/
     SerialDebug.begin(115200);
+}
+
+void DebugPrintBuf(byte* buf, unsigned int len){
+    // print the data as hex
+    for (int i = 0; i < len; i++)
+    {
+        SerialDebug.print("0x");
+        if (buf[i] < 16)
+        {
+            SerialDebug.print("0");
+        }
+        SerialDebug.print(buf[i], HEX);
+        SerialDebug.print(",");
+        if (i % 8 == 7)
+        {
+            SerialDebug.println();
+        }
+    }
+    SerialDebug.println();
 }
 
 void ALDL_Init()
@@ -122,17 +141,19 @@ void ALDL_SilenceBus()
     delay(50);
 }
 
-int ALDL_Read(byte *aldl_raw, int len)
+int ALDL_ReadMode1(byte *result_buf, int buf_len)
 {
-    if (len < ALDLMask->mode1_response_length)
+    /* get a mode 1 message from the ECU. this is a long data stream with 
+     * a plethora of useful content. */
+    if (buf_len < ALDLMask->mode1_response_length)
     {
         SerialDebug.println("! ALDL buf too small");
         return 0;
     }
-    // IMPROVE: can we do this in place on aldl_raw?
-    byte receive_buf[ALDL_MAX_MESSAGE_SIZE];
-    memset(receive_buf, 0xFF, sizeof(receive_buf));
-    memset(aldl_raw, 0x00, sizeof(aldl_raw));
+    // IMPROVE: can we do this in place on result_buf?
+    byte scan_buf[ALDL_MAX_MESSAGE_SIZE];
+    memset(scan_buf, 0xFF, sizeof(scan_buf));
+    memset(result_buf, 0x00, sizeof(result_buf));
 
     // get aldl mode 1 message
     // request MODE1 to get data
@@ -155,6 +176,128 @@ int ALDL_Read(byte *aldl_raw, int len)
 
     // set timeout to just the time necessary to fill the buf if the bus is busy enough
     SerialALDL.setTimeout(ALDL_MAX_MESSAGE_SIZE * 0.125);
+    int readlen = SerialALDL.readBytes(scan_buf,
+                                       ALDL_MAX_MESSAGE_SIZE);
+    // scan the received data for the start sequence
+    bool match = 0;
+    int i = 0;
+    for (i = 0; i < readlen - START_SEQ_LENGTH; i++)
+    {
+        if (memcmp(scan_buf + i, mode1_resp_header, START_SEQ_LENGTH) == 0)
+        {
+            match = 1;
+            break;
+        }
+    }
+    // FIXME: this is not the correct length to copy. it should stop at end of message!!!
+    unsigned int message_len = ALDL_MAX_MESSAGE_SIZE;
+    // byte index 1 in the header is the size plus 0x52.
+    unsigned int len_from_header = scan_buf[i + 1] - 0x52;
+    if (len_from_header < ALDL_MAX_MESSAGE_SIZE)
+    {
+        message_len = len_from_header;
+    }
+    memcpy(result_buf, scan_buf + i, message_len);
+    if (!match)
+    {
+        SerialDebug.println("! no header match");
+    }
+#ifdef DEBUG_LOG_ALDL
+    if (!match){
+      DebugPrintBuf(scan_buf, ALDL_MAX_MESSAGE_SIZE);
+    } else {
+      DebugPrintBuf(result_buf, message_len);
+    }
+#endif
+    if (message_len < ALDLMask->mode1_response_length - 3)
+    {
+        SerialDebug.println("! ALDL message len wrong");
+    }
+    // verify data integrity
+    if (!ALDL_VerifyChecksum(result_buf, message_len))
+    {
+        SerialDebug.println("! ALDL checksum error");
+        return 1;
+    }
+#ifdef DEBUG_LOG_ALDL
+    SerialDebug.println("message OK");
+#endif
+    return 0;
+}
+
+
+byte ALDL_CalculateChecksum(byte *buffer, int len)
+{
+    // calculates the single-byte checksum, summing from the start of buffer
+    // through len bytes which doesn't include the checksum. returns the
+    // value of the checksum to be added on that makes the result zero.
+    byte acc = 0;
+    for (unsigned int i = 0; i < len; i++)
+    {
+        acc += buffer[i];
+    }
+    return -acc;
+}
+
+
+int ALDL_ReadMode3(byte *result_buf, int len, uint16_t *request, int request_len)
+{
+    /* get a mode 3 message from the ECU. */
+    if (len < request_len + 4)
+    {
+        SerialDebug.println("! ALDL buf too small");
+        return 0;
+    }
+    // IMPROVE: can we do this in place on result_buf?
+    byte receive_buf[ALDL_MAX_MESSAGE_SIZE];
+    memset(receive_buf, 0x00, sizeof(receive_buf));
+    memset(result_buf, 0x00, sizeof(result_buf));
+
+    // assemble a mode 3 request
+    byte mode3_request[16];
+    mode3_request[0] = 0xF4;
+    mode3_request[1] = 1 + (2*request_len) + 85;
+    mode3_request[2] = 0x03;
+    for (int i = 0; i < request_len; i++)
+    {
+        mode3_request[3 + 2*i] = request[i] >> 8;
+        mode3_request[4 + 2*i] = request[i] & 0xFF;
+    }
+    unsigned int checksum_index = 3 + 2*request_len;
+    mode3_request[checksum_index] = ALDL_CalculateChecksum(mode3_request, checksum_index);
+    mode3_request[checksum_index+1] = 0;
+    SerialDebug.write("mode3 message:");
+    for (int i = 0; i < checksum_index + 2; i++)
+    {
+        SerialDebug.print("0x");
+        if (mode3_request[i] < 16)
+        {
+            SerialDebug.print("0");
+        }
+        SerialDebug.print(mode3_request[i], HEX);
+        SerialDebug.print(",");
+    }
+    SerialDebug.println();
+    
+    SerialALDL.write(mode3_request, checksum_index + 1);
+    SerialALDL.flush();
+    // read data
+    // first look for the header -- it has to be 0xF4 (header) 0x95 (XXX: why?) 0x01
+    // we attempt to read at least as many bytes as the request plus a few more, that
+    // way if we see the echo of our previous message we read past it.
+    // IMPROVE: scanning function here read and scan until we see 0xF4 0x95 0x01.
+    //          we also need to figure out why it's 0x95 so we can calculate that.
+    //          it shoudl be the length + 85 decimal but that doesn't agree.
+    // header for message from ECU
+    const int START_SEQ_LENGTH = 3;
+    byte resp_header[3];
+    resp_header[0] = 0xF4;
+    // XXX: why 0x55
+    resp_header[1] = request_len + 1 + 0x55;
+    resp_header[2] = 0x03;
+
+    // set timeout to just the time necessary to fill the buf if the bus is busy enough
+    SerialALDL.setTimeout(ALDL_MAX_MESSAGE_SIZE * 0.125);
     int readlen = SerialALDL.readBytes(receive_buf,
                                        ALDL_MAX_MESSAGE_SIZE);
     // scan the received data for the start sequence
@@ -162,7 +305,7 @@ int ALDL_Read(byte *aldl_raw, int len)
     int i = 0;
     for (i = 0; i < readlen - START_SEQ_LENGTH; i++)
     {
-        if (memcmp(receive_buf + i, mode1_resp_header, START_SEQ_LENGTH) == 0)
+        if (memcmp(receive_buf + i, resp_header, START_SEQ_LENGTH) == 0)
         {
             match = 1;
             break;
@@ -176,35 +319,23 @@ int ALDL_Read(byte *aldl_raw, int len)
     {
         message_len = len_from_header;
     }
-    memcpy(aldl_raw, receive_buf + i, message_len);
+    memcpy(result_buf, receive_buf + i, message_len);
     if (!match)
     {
         SerialDebug.println("! no header match");
     }
 #ifdef DEBUG_LOG_ALDL
-    // print the data as hex
-    for (int i = 0; i < message_len; i++)
-    {
-        SerialDebug.print("0x");
-        if (aldl_raw[i] < 16)
-        {
-            SerialDebug.print("0");
-        }
-        SerialDebug.print(aldl_raw[i], HEX);
-        SerialDebug.print(",");
-        if (i % 8 == 7)
-        {
-            SerialDebug.println();
-        }
+    if (!match){
+      DebugPrintBuf(receive_buf, ALDL_MAX_MESSAGE_SIZE);
+    } else {
+      DebugPrintBuf(result_buf, message_len);
     }
-    SerialDebug.println();
 #endif
-    if (message_len < ALDLMask->mode1_response_length - 3)
-    {
-        SerialDebug.println("! ALDL message len wrong");
+    if (!match){
+        return 1;
     }
     // verify data integrity
-    if (!ALDL_VerifyChecksum(aldl_raw, message_len))
+    if (!ALDL_VerifyChecksum(result_buf, message_len))
     {
         SerialDebug.println("! ALDL checksum error");
         return 1;
@@ -214,6 +345,7 @@ int ALDL_Read(byte *aldl_raw, int len)
 #endif
     return 0;
 }
+
 
 void CAN_Init()
 {
@@ -256,7 +388,7 @@ void CAN_SendMapped(int base_pid, byte *data, int data_len, const byte_map_t *ma
     int frame_length = 0;
     unsigned int map_index = 0;
     // send all values from the map. the last map entry has a label of numeric 0.
-    while (map[map_index].label != 0)
+    while (map[map_index].can_pid_offset != 255)
     {
         const byte_map_t *entry = &map[map_index];
         map_index += 1;
@@ -324,7 +456,7 @@ void loop()
         // periodically take control of the bus to disable ECU chatter
         ALDL_SilenceBus();
     }
-    int retval = ALDL_Read(aldl_raw, ALDL_MAX_MESSAGE_SIZE);
+    int retval = ALDL_ReadMode1(aldl_raw, ALDL_MAX_MESSAGE_SIZE);
     if (retval != 0)
     {
         SerialDebug.println("! ALDL read fail");
@@ -335,6 +467,20 @@ void loop()
                    aldl_raw + ALDLMask->mode1_data_offset,
                    ALDL_MAX_MESSAGE_SIZE - ALDLMask->mode1_data_offset,
                    ALDLMask->mode1_map);
+    /*
+    uint16_t request[] = {
+        // modew1
+        // bit1=vehicle moving, bit5=a/c clutch enabled, bit7=engine running
+        0x0028,
+        // lccpmw
+        // bit0=shift light on, bit1=malfunctions have occurred
+        0x00A7,
+    };
+    int retval = ALDL_ReadMode3(aldl_raw, ALDL_MAX_MESSAGE_SIZE, request, 2);
+    if (retval != 0){
+      delay(1000);
+      return;
+    }*/
     delay(100);
     iteration += 1;
 }

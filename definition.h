@@ -30,12 +30,23 @@ typedef enum _ALDL_OP
 // labels must match the CAN DBC file and will be packed accordingly.
 typedef struct
 {
-	const char *label;
 	unsigned int aldl_byte_offset;
 	unsigned int num_bytes;
 	unsigned int can_pid_offset;
 	unsigned int can_byte_offset;
 } byte_map_t;
+
+
+/* for requesting specific bytes from the ECU using 16-bit memory address */
+typedef struct
+{
+	uint16_t memory_address;
+  // FIXME: support multiple sequence bytes
+	//unsigned int num_bytes;
+	unsigned int can_pid_offset;
+	unsigned int can_byte_offset;
+} mode3_map_t;
+
 
 typedef struct _aldl_definition
 {
