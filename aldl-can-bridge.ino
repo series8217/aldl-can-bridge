@@ -269,7 +269,7 @@ void CAN_SendMapped(int base_pid, byte *data, int data_len, const byte_map_t *ma
             // end of this frame, send frame if any data
             if (frame_length > 0)
             {
-                CAN_SendBatch(base_pid + can_pid_offset, can_data, 8);
+                CAN_SendBatch(base_pid + can_pid_offset, can_data, frame_length);
             }
             // start working on the new frame
             can_pid_offset = entry->can_pid_offset;
