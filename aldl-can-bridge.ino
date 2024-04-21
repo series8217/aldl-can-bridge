@@ -89,9 +89,6 @@ void SerialDebug_Init()
 {
     /* Start the serial debug interface (USB to computer )*/
     SerialDebug.begin(115200);
-    while (!SerialDebug)
-    {
-    }
 }
 
 void ALDL_Init()
