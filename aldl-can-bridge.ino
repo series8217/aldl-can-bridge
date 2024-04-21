@@ -116,7 +116,7 @@ bool ALDL_VerifyChecksum(byte *buffer, int len)
     return acc == 0;
 }
 
-int ALDL_SilenceBus()
+void ALDL_SilenceBus()
 {
     // become the bus master
     // send MODE8 to silence the ECM
@@ -309,6 +309,8 @@ void setup()
     SerialDebug_Init();
     ALDL_Init();
     CAN_Init();
+    // give the ECM time to boot up
+    delay(2000);
 }
 
 void loop()

@@ -1,5 +1,5 @@
 {
     "sketch": "aldl-can-bridge.ino",
-    "board": "longan-rp2040:longan-rp2040:canbed2040",
-    "configuration": "flash=2097152_0,freq=125,dbgport=Disabled,dbglvl=None,usbstack=picosdk"
+    "board": "arduino:avr:leonardo",
+    "port": "/dev/tty.usbmodem21301"
 }
