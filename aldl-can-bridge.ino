@@ -444,7 +444,7 @@ void setup()
     ALDL_Init();
     CAN_Init();
     // give the ECM time to boot up
-    delay(2000);
+    delay(500);
 }
 
 
@@ -498,9 +498,9 @@ void loop()
     status_frame[1] = error;
     CAN.sendMsgBuf(CAN_STATUS_PID, USE_EXTENDED_PID, 2, status_frame);
     if (error != ERROR_NONE){
-        delay(1000);
+        delay(250);
     } else {
-        delay(100);
+        delay(50);
     }
     iteration += 1;
 }
