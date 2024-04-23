@@ -25,8 +25,8 @@ B0_ 898 ECM_2: 5 ALDL_DF_MODE1
 
 B0_ 898 ECM_3: 4 ALDL_DF_MODE1
     SG_ KnockEvents       : 0|8@0+        (1.0,0.0)       [0|0]   "counts"
-    SG_ SparkAdvance      : 8|8@0+        (0.35156,0.0)   [0|0]   "deg"
-    SG_ KnockRetard       : 16|8@0+        (0.175781,0.0)  [0|0]   "deg"
+    SG_ SparkAdvance      : 8|16@0+        (0.35156,0.0)   [0|0]   "deg"
+    SG_ KnockRetard       : 24|8@0+        (0.175781,0.0)  [0|0]   "deg"
 
 B0_ 899 ECM_4: 7 ALDL_DF_MODE1
     SG_ TPSVoltage        : 0|8@0+        (0.019531,0.0)  [0|0]   "V"

@@ -32,7 +32,7 @@ typedef struct
 {
 	unsigned int aldl_byte_offset;
 	unsigned int num_bytes;
-	unsigned int can_pid_offset;
+	unsigned long can_pid_offset;
 	unsigned int can_byte_offset;
 } byte_map_t;
 
@@ -43,7 +43,7 @@ typedef struct
 	uint16_t memory_address;
   // FIXME: support multiple sequence bytes
 	//unsigned int num_bytes;
-	unsigned int can_pid_offset;
+	unsigned long can_pid_offset;
 	unsigned int can_byte_offset;
 } mode3_map_t;
 

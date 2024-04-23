@@ -45,7 +45,7 @@
 #define CAN_BAUD_RATE CAN20_500KBPS
 
 // Debug Logging
-// #define DEBUG_LOG_ALDL
+//#define DEBUG_LOG_ALDL
 
 #include <SPI.h>
 
@@ -74,7 +74,12 @@ MCP_CAN CAN(SPI_CS_PIN_MCP_CAN)
 #define ALDL_MAX_MESSAGE_SIZE 156
 #define CAN_MAX_FRAME_SIZE 8
 
-#define CAN_BASE_PID 0x380
+// base PID for the ALDL data
+const unsigned long CAN_BASE_PID = 0x1BAD0;
+#define USE_EXTENDED_PID 1
+
+// PID for the status of this module, even if no ALDL
+const unsigned long CAN_STATUS_PID = 0x2BAD0;
 
 // pin for CAN-FD Shield
 // const int SPI_CS_PIN = 9;
@@ -364,7 +369,7 @@ void CAN_Init()
     SerialDebug.println(mode);
 }
 
-void CAN_SendBatch(int base_pid, byte *data, int len)
+void CAN_SendBatch(unsigned long base_pid, byte *data, int len)
 {
     // send data to CAN bus. split into 8 bytes per frame.
     unsigned long can_frame_pid = base_pid;
@@ -375,16 +380,16 @@ void CAN_SendBatch(int base_pid, byte *data, int len)
         {
             can_message[j] = data[i + j];
         }
-        CAN.sendMsgBuf(can_frame_pid, 0, frame_len, can_message);
+        CAN.sendMsgBuf(can_frame_pid, USE_EXTENDED_PID, frame_len, can_message);
         can_frame_pid++;
         delay(10);
     }
 }
 
-void CAN_SendMapped(int base_pid, byte *data, int data_len, const byte_map_t *map)
+void CAN_SendMapped(unsigned long base_pid, byte *data, int data_len, const byte_map_t *map)
 {
     byte can_data[8] = {0};
-    int can_pid_offset = 0;
+    unsigned long can_pid_offset = 0;
     int frame_length = 0;
     unsigned int map_index = 0;
     // send all values from the map. the last map entry has a label of numeric 0.
@@ -442,14 +447,20 @@ void setup()
     delay(2000);
 }
 
+
+#define ERROR_NONE           0
+#define ERROR_BUF_TOO_SMALL  1
+#define ERROR_ALDL_READ_FAIL 2
+
+
 void loop()
 {
+    static int error = ERROR_NONE;
     static int iteration = 0;
     if (ALDL_MAX_MESSAGE_SIZE < ALDLMask->mode1_response_length)
     {
         SerialDebug.println("! ALDL buffer too small");
-        delay(1000);
-        return;
+        error = 1;
     }
     if (iteration % 5 == 0)
     {
@@ -460,13 +471,14 @@ void loop()
     if (retval != 0)
     {
         SerialDebug.println("! ALDL read fail");
-        delay(1000);
-        return;
+        error = 1;
     }
-    CAN_SendMapped(CAN_BASE_PID,
-                   aldl_raw + ALDLMask->mode1_data_offset,
-                   ALDL_MAX_MESSAGE_SIZE - ALDLMask->mode1_data_offset,
-                   ALDLMask->mode1_map);
+    if (error == ERROR_NONE){
+        CAN_SendMapped(CAN_BASE_PID,
+                    aldl_raw + ALDLMask->mode1_data_offset,
+                    ALDL_MAX_MESSAGE_SIZE - ALDLMask->mode1_data_offset,
+                    ALDLMask->mode1_map);
+    }
     /*
     uint16_t request[] = {
         // modew1
@@ -481,6 +493,14 @@ void loop()
       delay(1000);
       return;
     }*/
-    delay(100);
+    byte status_frame[8] = {0};
+    status_frame[0] = 0x01;
+    status_frame[1] = error;
+    CAN.sendMsgBuf(CAN_STATUS_PID, USE_EXTENDED_PID, 2, status_frame);
+    if (error != ERROR_NONE){
+        delay(1000);
+    } else {
+        delay(100);
+    }
     iteration += 1;
 }
