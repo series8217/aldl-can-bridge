@@ -455,8 +455,8 @@ void setup()
 
 void loop()
 {
-    static int error = ERROR_NONE;
     static int iteration = 0;
+    int error = ERROR_NONE;
     if (ALDL_MAX_MESSAGE_SIZE < ALDLMask->mode1_response_length)
     {
         SerialDebug.println("! ALDL buffer too small");
