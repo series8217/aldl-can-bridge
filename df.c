@@ -12,6 +12,7 @@
 
 
 // XXX: check for correctness against DF mask
+// XXX: FIXME: all these byte offsets are one less than in the tunerpro definition ADS file.
 const byte_map_t aldl_DF_mode1_byte_map[] =
 	{
 		// label, aldl_byte_offset, num_bytes, can_pid_offset, can_bytes_offset
@@ -41,8 +42,8 @@ const byte_map_t aldl_DF_mode1_byte_map[] =
 		
 		// frame 3
 		/* KnockEvents */ { 			50, 1, 3, 0},
-		/* SparkAdvance */ { 			39, 1, 3, 1},
-		/* KnockRetard */ { 			45, 1, 3, 2},
+		/* SparkAdvance */ { 			37, 2, 3, 1},
+		/* KnockRetard */ { 			45, 1, 3, 3},
 		
 		// frame 4
 		/* TPSVoltage */ { 				 8, 1, 4, 0},
