@@ -50,8 +50,72 @@ B0_ 901 ECM_6: 2 ALDL_DF_MODE1
     SG_ PROMID            : 0|16@0+         (1.0,0.0)      [0|0]   "ID"
 
 B0_ 902 ECM_7: 4 ALDL_DF_MODE1
-    SG_ MALFF1            : 0|8@0+          (1.0,0.0)      [0|0]   "MALF FLAGS 1"
-    SG_ MALFF2            : 8|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 2"
-    SG_ MALFF3            : 16|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 3"
-    SG_ MALFF4            : 24|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 4"
-    SG_ MAP_LOW           : 12|1@0+
+    SG_ MALFF_MODE1_3     : 0|8@0+          (1.0,0.0)      [0|0]   "MALF FLAGS 1"
+    SG_ ErrorCrank        : 7|1@0+          (1.0,0.0)      [0|1]   "12 Crank Sensor"      
+    SG_ ErrorO2Sensor     : 6|1@0+          (1.0,0.0)      [0|1]   "13 O2 Sensor"
+    SG_ ErrorCoolantHigh  : 5|1@0+          (1.0,0.0)      [0|1]   "14 Coolant Sensor High"
+    SG_ ErrorCoolantLow   : 4|1@0+          (1.0,0.0)      [0|1]   "15 Coolant Sensor Low"
+    SG_ ErrorTPSHigh      : 3|1@0+          (1.0,0.0)      [0|1]   "21 TPS High"
+    SG_ ErrorTPSLow       : 2|1@0+          (1.0,0.0)      [0|1]   "22 TPS Low"
+    SG_ ErrorMATLow       : 1|1@0+          (1.0,0.0)      [0|1]   "23 MAT Low"
+    SG_ ErrorVSSLow       : 0|1@0+          (1.0,0.0)      [0|1]   "24 VSS Low"
+
+    SG_ MALFF_MODE1_4     :  8|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 2"
+    SG_ ErrorMATHigh      : 15|1@0+         (1.0,0.0)      [0|1]   "25 MAT High"
+    SG_ ErrorFuelInjector : 14|1@0+         (1.0,0.0)      [0|1]   "31 MAT High"
+    SG_ ErrorEGR          : 13|1@0+         (1.0,0.0)      [0|1]   "32 EGR"
+    SG_ ErrorMAPHigh      : 12|1@0+         (1.0,0.0)      [0|1]   "33 MAP High"
+    SG_ ErrorMAPLow       : 11|1@0+         (1.0,0.0)      [0|1]   "34 MAP Low"
+    SG_ ErrorIAC          : 10|1@0+         (1.0,0.0)      [0|1]   "35 IAC"
+    SG_ ErrorCylSelect    :  9|1@0+         (1.0,0.0)      [0|1]   "41 Cylinder Select"
+    SG_ ErrorKnock        :  8|1@0+         (1.0,0.0)      [0|1]   "42 Knock Sensor"
+
+    SG_ MALFF_MODE1_5     : 16|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 3"
+    SG_ ErrorKnock        : 23|1@0+         (1.0,0.0)      [0|1]   "43 ESC"
+    SG_ ErrorO2Lean       : 22|1@0+         (1.0,0.0)      [0|1]   "44 O2 Lean"
+    SG_ ErrorO2Rich       : 21|1@0+         (1.0,0.0)      [0|1]   "45 O2 Rich"
+    SG_ ErrorVATS         : 20|1@0+         (1.0,0.0)      [0|1]   "46 VATS"
+    SG_ ErrorPROM         : 19|1@0+         (1.0,0.0)      [0|1]   "51 PROM"
+    SG_ ErrorVoltageHigh  : 18|1@0+         (1.0,0.0)      [0|1]   "53 Battery Voltage High"
+    SG_ ErrorFPumpLow     : 17|1@0+         (1.0,0.0)      [0|1]   "54 Fuel Pump Voltage Low"
+    SG_ ErrorADU          : 16|1@0+         (1.0,0.0)      [0|1]   "55 ADU"
+
+    SG_ MALFF_MODE1_6     : 24|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 4"
+    SG_ ErrorTransSolB    : 27|1@0+         (1.0,0.0)      [0|1]   "36 Tranny Solenoid B"
+    SG_ ErrorClutchSw     : 31|1@0+         (1.0,0.0)      [0|1]   "37 Clutch Switch"
+    SG_ ErrorDegradedO2   : 30|1@0+         (1.0,0.0)      [0|1]   "61 Degraded O2"
+    SG_ ErrorGearSwitch   : 28|1@0+         (1.0,0.0)      [0|1]   "62 Gear Switch"
+    SG_ ErrorACPressure   : 25|1@0+         (1.0,0.0)      [0|1]   "66 A/C Pressure Sensor"
+
+
+B0_ 903 ECM_8: 1 ALDL_DF_MODE1
+    SG_ STATUS1_18        :  0|8@0+          (1.0,0.0)      [0|0]   "Status Flags 1"
+    SG_ FAN1              :  4|1@0+          (1.0,0.0)      [0|1]   "Fan 1"
+    SG_ FAN1              :  5|1@0+          (1.0,0.0)      [0|1]   "Fan 2"
+    
+    SG_ STATUS2_52        :  8|8@0+          (1.0,0.0)      [0|0]   "Status Flags 2"
+    SG_ TCCShiftLight     : 11|1@0+          (1.0,0.0)      [0|1]   "TCC/Shift Light On"
+
+    SG_ STATUS3_53        : 16|8@0+          (1.0,0.0)      [0|0]   "Status Flags 3"
+    SG_ LowACPressure     : 17|1@0+          (1.0,0.0)      [0|1]   "Low AC Pressure"
+    SG_ Defrost           : 18|1@0+          (1.0,0.0)      [0|1]   "Defrost"
+
+    SG_ STATUS4_58        : 24|8@0+          (1.0,0.0)      [0|0]   "Status Flags 4"
+    SG_ MALFUNCTION       : 25|1@0+          (1.0,0.0)      [0|1]   "Malfuctions Have Occured"
+    SG_ LAUNCHMODE        : 26|1@0+          (1.0,0.0)      [0|1]   "Launch Mode"
+    SG_ PURGING           : 30|1@0+          (1.0,0.0)      [0|1]   "Purging"
+
+    SG_ STATUS5_59        : 24|8@0+          (1.0,0.0)      [0|0]   "Status Flags 5"
+    SG_ GEAR_2_START      : 25|1@0+          (1.0,0.0)      [0|1]   "Second Gear Start"
+    SG_ AC_REQUESTED      : 31|1@0+          (1.0,0.0)      [0|1]   "AC Requested"
+
+    SG_ STATUS5_60        : 24|8@0+          (1.0,0.0)      [0|0]   "Status Flags 6"
+    SG_ O2_SENSOR_RDY     : 24|1@0+          (1.0,0.0)      [0|1]   "O2 Sensor Ready"
+
+    SG_ STATUS6_62        : 32|8@0+          (1.0,0.0)      [0|0]   "Status Flags 7"
+    SG_ DECEL_FUEL_CUTOFF : 35|1@0+          (1.0,0.0)      [0|1]   "DFCO"
+    SG_ IDLE_FUEL_CALC    : 37|1@0+          (1.0,0.0)      [0|1]   "ENUM IDLE FUEL CALC: 0 is O2, 1 is Airflow"
+    
+    SG_ STATUS6_63        : 40|8@0+          (1.0,0.0)      [0|0]   "Status Flags 8"
+    SG_ RICH_LEAN         : 45|1@0+          (1.0,0.0)      [0|1]   "ENUM 0 is LEAN, 1 is RICH"
+    SG_ LOOP_STATUS       : 47|1@0+          (1.0,0.0)      [0|1]   "ENUM 0 is OPEN, 1 is CLOSED"
