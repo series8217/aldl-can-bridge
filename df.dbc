@@ -88,7 +88,7 @@ B0_ 902 ECM_7: 4 ALDL_DF_MODE1
     SG_ ErrorACPressure   : 25|1@0+         (1.0,0.0)      [0|1]   "66 A/C Pressure Sensor"
 
 
-B0_ 903 ECM_8: 1 ALDL_DF_MODE1
+B0_ 903 ECM_8: 8 ALDL_DF_MODE1
     SG_ STATUS1_18        :  0|8@0+          (1.0,0.0)      [0|0]   "Status Flags 1"
     SG_ FAN1              :  4|1@0+          (1.0,0.0)      [0|1]   "Fan 1"
     SG_ FAN1              :  5|1@0+          (1.0,0.0)      [0|1]   "Fan 2"
