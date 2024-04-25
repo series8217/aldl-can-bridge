@@ -45,7 +45,7 @@
 #define CAN_BAUD_RATE CAN20_500KBPS
 
 // Debug Logging
-//#define DEBUG_LOG_ALDL
+// #define DEBUG_LOG_ALDL
 
 #include <SPI.h>
 
@@ -96,7 +96,8 @@ void SerialDebug_Init()
     SerialDebug.begin(115200);
 }
 
-void DebugPrintBuf(byte* buf, unsigned int len){
+void DebugPrintBuf(byte *buf, unsigned int len)
+{
     // print the data as hex
     for (int i = 0; i < len; i++)
     {
@@ -148,7 +149,7 @@ void ALDL_SilenceBus()
 
 int ALDL_ReadMode1(byte *result_buf, int buf_len)
 {
-    /* get a mode 1 message from the ECU. this is a long data stream with 
+    /* get a mode 1 message from the ECU. this is a long data stream with
      * a plethora of useful content. */
     if (buf_len < ALDLMask->mode1_response_length)
     {
@@ -208,10 +209,13 @@ int ALDL_ReadMode1(byte *result_buf, int buf_len)
         SerialDebug.println("! no header match");
     }
 #ifdef DEBUG_LOG_ALDL
-    if (!match){
-      DebugPrintBuf(scan_buf, ALDL_MAX_MESSAGE_SIZE);
-    } else {
-      DebugPrintBuf(result_buf, message_len);
+    if (!match)
+    {
+        DebugPrintBuf(scan_buf, ALDL_MAX_MESSAGE_SIZE);
+    }
+    else
+    {
+        DebugPrintBuf(result_buf, message_len);
     }
 #endif
     if (message_len < ALDLMask->mode1_response_length - 3)
@@ -230,7 +234,6 @@ int ALDL_ReadMode1(byte *result_buf, int buf_len)
     return 0;
 }
 
-
 byte ALDL_CalculateChecksum(byte *buffer, int len)
 {
     // calculates the single-byte checksum, summing from the start of buffer
@@ -243,7 +246,6 @@ byte ALDL_CalculateChecksum(byte *buffer, int len)
     }
     return -acc;
 }
-
 
 int ALDL_ReadMode3(byte *result_buf, int len, uint16_t *request, int request_len)
 {
@@ -261,16 +263,16 @@ int ALDL_ReadMode3(byte *result_buf, int len, uint16_t *request, int request_len
     // assemble a mode 3 request
     byte mode3_request[16];
     mode3_request[0] = 0xF4;
-    mode3_request[1] = 1 + (2*request_len) + 85;
+    mode3_request[1] = 1 + (2 * request_len) + 85;
     mode3_request[2] = 0x03;
     for (int i = 0; i < request_len; i++)
     {
-        mode3_request[3 + 2*i] = request[i] >> 8;
-        mode3_request[4 + 2*i] = request[i] & 0xFF;
+        mode3_request[3 + 2 * i] = request[i] >> 8;
+        mode3_request[4 + 2 * i] = request[i] & 0xFF;
     }
-    unsigned int checksum_index = 3 + 2*request_len;
+    unsigned int checksum_index = 3 + 2 * request_len;
     mode3_request[checksum_index] = ALDL_CalculateChecksum(mode3_request, checksum_index);
-    mode3_request[checksum_index+1] = 0;
+    mode3_request[checksum_index + 1] = 0;
     SerialDebug.write("mode3 message:");
     for (int i = 0; i < checksum_index + 2; i++)
     {
@@ -283,7 +285,7 @@ int ALDL_ReadMode3(byte *result_buf, int len, uint16_t *request, int request_len
         SerialDebug.print(",");
     }
     SerialDebug.println();
-    
+
     SerialALDL.write(mode3_request, checksum_index + 1);
     SerialALDL.flush();
     // read data
@@ -330,13 +332,17 @@ int ALDL_ReadMode3(byte *result_buf, int len, uint16_t *request, int request_len
         SerialDebug.println("! no header match");
     }
 #ifdef DEBUG_LOG_ALDL
-    if (!match){
-      DebugPrintBuf(receive_buf, ALDL_MAX_MESSAGE_SIZE);
-    } else {
-      DebugPrintBuf(result_buf, message_len);
+    if (!match)
+    {
+        DebugPrintBuf(receive_buf, ALDL_MAX_MESSAGE_SIZE);
+    }
+    else
+    {
+        DebugPrintBuf(result_buf, message_len);
     }
 #endif
-    if (!match){
+    if (!match)
+    {
         return 1;
     }
     // verify data integrity
@@ -350,7 +356,6 @@ int ALDL_ReadMode3(byte *result_buf, int len, uint16_t *request, int request_len
 #endif
     return 0;
 }
-
 
 void CAN_Init()
 {
@@ -447,11 +452,9 @@ void setup()
     delay(500);
 }
 
-
-#define ERROR_NONE           0
-#define ERROR_BUF_TOO_SMALL  1
+#define ERROR_NONE 0
+#define ERROR_BUF_TOO_SMALL 1
 #define ERROR_ALDL_READ_FAIL 2
-
 
 void loop()
 {
@@ -473,11 +476,12 @@ void loop()
         SerialDebug.println("! ALDL read fail");
         error = 1;
     }
-    if (error == ERROR_NONE){
+    if (error == ERROR_NONE)
+    {
         CAN_SendMapped(CAN_BASE_PID,
-                    aldl_raw + ALDLMask->mode1_data_offset,
-                    ALDL_MAX_MESSAGE_SIZE - ALDLMask->mode1_data_offset,
-                    ALDLMask->mode1_map);
+                       aldl_raw + ALDLMask->mode1_data_offset,
+                       ALDL_MAX_MESSAGE_SIZE - ALDLMask->mode1_data_offset,
+                       ALDLMask->mode1_map);
     }
     /*
     uint16_t request[] = {
@@ -497,9 +501,12 @@ void loop()
     status_frame[0] = 0x01;
     status_frame[1] = error;
     CAN.sendMsgBuf(CAN_STATUS_PID, USE_EXTENDED_PID, 2, status_frame);
-    if (error != ERROR_NONE){
+    if (error != ERROR_NONE)
+    {
         delay(250);
-    } else {
+    }
+    else
+    {
         delay(50);
     }
     iteration += 1;
