@@ -36,23 +36,21 @@ typedef struct
 	unsigned int can_byte_offset;
 } byte_map_t;
 
-
 /* for requesting specific bytes from the ECU using 16-bit memory address */
 typedef struct
 {
 	uint16_t memory_address;
-  // FIXME: support multiple sequence bytes
-	//unsigned int num_bytes;
+	// FIXME: support multiple sequence bytes
+	// unsigned int num_bytes;
 	unsigned long can_pid_offset;
 	unsigned int can_byte_offset;
 } mode3_map_t;
-
 
 typedef struct _aldl_definition
 {
 	const char *name;
 	byte mode1_request[__MAX_REQUEST_SIZE]; // the mode 1 request message, including the checksum
-	unsigned int mode1_request_length;				 // the length of the mode 1 message including the checksum
+	unsigned int mode1_request_length;		// the length of the mode 1 message including the checksum
 
 	unsigned int mode1_response_length; // the total length of the response from the ecm
 
@@ -63,13 +61,13 @@ typedef struct _aldl_definition
 									// message is the 4th byte onward, this should be 3. (1+3 = 4)
 
 	const byte_map_t *mode1_map; // pointer to start of table of byte_def_t structs.
-						   // the last element must be LINUXALDL_MODE1_END_DEF
+								 // the last element must be LINUXALDL_MODE1_END_DEF
 
 	byte mode8_request[__MAX_REQUEST_SIZE]; // the mode 8 (silence) request message, incl checksum
-	unsigned int mode8_request_length;				 // the length of the mode 8 message incl checksum
+	unsigned int mode8_request_length;		// the length of the mode 8 message incl checksum
 
 	byte mode9_request[__MAX_REQUEST_SIZE]; // the mode 9 (un-silence) request message, incl checksum
-	unsigned int mode9_request_length;				 // the length of the mode 9 message including the checksum
+	unsigned int mode9_request_length;		// the length of the mode 9 message including the checksum
 
 } aldl_definition_t;
 
