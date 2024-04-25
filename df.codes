@@ -1,0 +1,22 @@
+
+13 	Oxygen sensor voltage stays between 0.35 and 0.55 volts for 60 seconds when the TPS signal was above 4%. The engine had been running for at least 2 minutes.
+14 	Coolant temperature sensor signal indicates a temperature of over 270° F after the engine had been running for at least 20 seconds.
+15 	Coolant temperature sensor signal indicates a temperature colder than -38° F for at least 1 second.
+21 	TPS voltage was above 3.8 volts for 10 seconds when engine was running and air flow was less than 17 gm/sec.
+22 	TPS voltage was under 0.25 volts for 3 seconds when the ignition was on.
+23 	Inlet air temperature sensor signal showed an air temperature of -31° F for 10 seconds after engine had been running for 4 minutes.
+24 	Engine Speed was between 2200 and 4400 RPM and transmission was not in park or neutral and TPS was less than 2% for 3 seconds.
+25 	Inlet air temperature sensor signal showed an air temperature of over 293° F for 3 seconds when vehicle speed was greater than 35 MPH.
+32 	The ECM opens each EGR control valve during deceleration and monitors the change in manifold vacuum. This code is set when the change in manifold vacuum is outside the normal range.
+33 	MAP sensor voltage was too high for 4.8 seconds when throttle angle was less than 2%.
+34 	MAP sensor voltage was too low for 1 second when engine speed was under 600 RPM, or MAP sensor voltage was too low for 1 second when engine speed was over 600 RPM and throttle angle was above 20%.
+35 	Engine idle speed is either 300 RPM above or below the desired idle speed for 50 seconds.
+42 	The EST signal did not change when the ECM applied bypass voltage to the ignition module.
+43 	Knock sensor signal was either above 4.6 volts or below 0.64 volts for at least 10 seconds.
+44 	Oxygen sensor voltage was under 0.25 volts for at least 60 seconds of closed loop operation.
+45 	Oxygen sensor voltage was over 0.7 volts for 50 seconds in closed loop operation with a throttle angle between 3% and 45%.
+51 	MEM-CAL error.
+53 	ECM sees a battery voltage of more than 16.9 volts for 10 seconds.
+54 	Fuel pump voltage was less than 4 volts for 4 seconds.
+62 	Vehicle was in 2nd gear but 2nd gear signal switch was open, or vehicle was in 3rd gear but 3rd gear switch was open.
+66 	A/C pressure sensor voltage was either above 4.9 volts or below 0.1 volts for at least 5 seconds.
