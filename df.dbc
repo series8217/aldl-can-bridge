@@ -2,6 +2,10 @@ VERSION "CAN ALDL Bridge DF 1.0"
 
 BS_: 500000 : 0,0
 
+VAL_ 903 IDLE_FUEL_CALC 0 "O2" 1 "Airflow";
+VAL_ 903 RICH_LEAN 0 "LEAN" 1 "RICH";
+VAL_ 903 LOOP_STATUS 0 "OPEN" 1 "CLOSED";
+
 BO_ 896 ECM_0: 7 ALDL_DF_MODE1
     SG_ EngineRPM         : 0|8@0+        (25.0,0.0)      [0|0]   "rpm"
     SG_ ThrottlePosition  : 8|8@0+        (0.003906,0.0)  [0|100]   "%"
