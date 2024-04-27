@@ -387,7 +387,6 @@ void CAN_SendBatch(unsigned long base_pid, byte *data, int len)
         }
         CAN.sendMsgBuf(can_frame_pid, USE_EXTENDED_PID, frame_len, can_message);
         can_frame_pid++;
-        delay(10);
     }
 }
 
@@ -507,7 +506,7 @@ void loop()
     }
     else
     {
-        delay(50);
+        delay(1);
     }
     iteration += 1;
 }
