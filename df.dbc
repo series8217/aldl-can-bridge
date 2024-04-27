@@ -66,7 +66,7 @@ B0_ 902 ECM_7: 4 ALDL_DF_MODE1
 
     SG_ MALFF_MODE1_4     :  8|8@0+         (1.0,0.0)      [0|0]   "MALF FLAGS 2"
     SG_ ErrorMATHigh      : 15|1@0+         (1.0,0.0)      [0|1]   "25 MAT High"
-    SG_ ErrorFuelInjector : 14|1@0+         (1.0,0.0)      [0|1]   "31 MAT High"
+    SG_ ErrorFuelInjector : 14|1@0+         (1.0,0.0)      [0|1]   "31 Fuel Injector"
     SG_ ErrorEGR          : 13|1@0+         (1.0,0.0)      [0|1]   "32 EGR"
     SG_ ErrorMAPHigh      : 12|1@0+         (1.0,0.0)      [0|1]   "33 MAP High"
     SG_ ErrorMAPLow       : 11|1@0+         (1.0,0.0)      [0|1]   "34 MAP Low"
